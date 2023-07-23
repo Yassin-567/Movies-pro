@@ -1,7 +1,5 @@
-requests==2.5.1
-numpy==1.19.2
-aiogram
-pytelegramBotAPI
-ffmpeg==1.4
-#ffmpeg-python
 gunicorn
+requests
+numpy
+aiogram
+python-ffmpeg-python
