@@ -1,1 +1,1 @@
-gunicorn bot:dp -b 0.0.0.0:$PORT
+web: gunicorn bot:dp --workers 1
