@@ -1,1 +1,1 @@
-gunicorn bot:dp
+web: gunicorn bot:dp -b 0.0.0.0:$PORT
