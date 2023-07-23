@@ -4,3 +4,4 @@ aiogram
 pytelegramBotAPI
 ffmpeg==1.4
 #ffmpeg-python
+gunicorn
