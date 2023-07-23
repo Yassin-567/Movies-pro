@@ -1,40 +1,36 @@
 import os
+from aiogram import Bot, Dispatcher, types
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
+from aiogram.types import InputFile
 import ffmpeg
-from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher
-from aiogram.utils import executor
 
-# API token from BotFather
-BOT_TOKEN = "6192009745:AAEmB8TpAnPDYroterQfACHIzGT5r3B7p5E"
+API_TOKEN = "6192009745:AAEmB8TpAnPDYroterQfACHIzGT5r3B7p5E"
 
-# Initialize bot and dispatcher
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
+dp.middleware.setup(LoggingMiddleware())
 
-# Handler for receiving videos
+@dp.message_handler(commands=['start'])
+async def on_start(message: types.Message):
+    await message.reply("I am ready for videos!")
+
 @dp.message_handler(content_types=types.ContentType.VIDEO)
-async def handle_video(message: types.Message):
-    # Get the video file
-    video = message.video
-
-    # Download the video file
-    video_path = f"{video.file_id}.mp4"
-    await bot.download_file_by_id(video.file_id, video_path)
-
-    # Compress the video using ffmpeg
-    compressed_path = f"{video.file_id}_compressed.mp4"
-    ffmpeg.input(video_path).output(compressed_path).run()
-
+async def on_video_received(message: types.Message):
+    video_file = await bot.get_file(message.video.file_id)
+    video_path = await video_file.download()
+    
+    # Compress video using ffmpeg
+    compressed_video_path = "compressed_" + os.path.basename(video_path)
+    ffmpeg.input(video_path).output(compressed_video_path, crf=30).run()
+    
     # Send the compressed video back
-    await bot.send_video(message.chat.id, video=open(compressed_path, "rb"))
-
-    # Clean up the files
+    with open(compressed_video_path, 'rb') as video:
+        await bot.send_video(message.chat.id, InputFile(video))
+    
+    # Clean up temporary files
     os.remove(video_path)
-    os.remove(compressed_path)
+    os.remove(compressed_video_path)
 
-# Define the callable application object
-app = dp
-
-# Start the bot using Gunicorn
 if __name__ == '__main__':
+    from aiogram import executor
     executor.start_polling(dp, skip_updates=True)
