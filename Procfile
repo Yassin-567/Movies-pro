@@ -1,1 +1,1 @@
-gunicorn bot:dp --bind 0.0.0.0:$PORT
+gunicorn bot:dp
