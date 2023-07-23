@@ -2,4 +2,4 @@ gunicorn
 requests
 numpy
 aiogram
-python-ffmpeg-python
+ffmpeg-python
