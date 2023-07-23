@@ -36,4 +36,4 @@ async def handle_video(message: types.Message):
 
 # Start the bot
 if name == 'main':
-    executor.start_polling(dp, skip_updates=True) is this code right with python at the beginning
+    executor.start_polling(dp, skip_updates=True)
